@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cambridge School - Result Management System</title>
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- Login Screen Overlay -->
+    <div class="login-overlay" id="login-overlay">
+        <div class="login-card">
+            <div class="login-logo">
+                <img src="school_logo.png" alt="Cambridge School Logo" onerror="this.src='https://images.unsplash.com/photo-1546410531-bb4caa6b424d?auto=format&fit=crop&q=80&w=100';">
+            </div>
+            <div class="login-header">
+                <h1>Cambridge School</h1>
+                <p>Result Management System</p>
+            </div>
+            <form class="login-form" id="login-form" onsubmit="handleLogin(event)">
+                <div class="login-input-group">
+                    <label for="login-username">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg>
+                        Username
+                    </label>
+                    <input type="text" id="login-username" class="login-input" placeholder="Enter your username" autocomplete="username" required>
+                </div>
+                <div class="login-input-group">
+                    <label for="login-password">
+                        <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.8-2.2-5-5-5S7 3.2 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.7 1.4-3.1 3.1-3.1 1.7 0 3.1 1.4 3.1 3.1v2z"/></svg>
+                        Password
+                    </label>
+                    <div class="login-password-wrapper">
+                        <input type="password" id="login-password" class="login-input" placeholder="Enter your password" autocomplete="current-password" required>
+                        <button type="button" class="toggle-password" id="toggle-password-btn" onclick="togglePasswordVisibility()" title="Show/Hide Password">
+                            <svg id="eye-show" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                            <svg id="eye-hide" viewBox="0 0 24 24" style="display:none"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="login-error" id="login-error"></div>
+                <button type="submit" class="login-btn" id="login-submit-btn">
+                    <svg viewBox="0 0 24 24"><path d="M10 17v-3H3v-4h7V7l5 5-5 5zm9 2H12v2h7c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-7v2h7v14z"/></svg>
+                    Sign In
+                </button>
+            </form>
+            <div class="login-footer-note">Cambridge School &bull; Academic Portal</div>
+        </div>
+    </div>
+
+    <div class="app-container">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div>
+                <div class="school-brand">
+                    <img src="school_logo.png" alt="Cambridge School Logo" onerror="this.src='https://images.unsplash.com/photo-1546410531-bb4caa6b424d?auto=format&fit=crop&q=80&w=100';">
+                    <h2>Cambridge School<br><span style="font-weight: 500; font-size: 0.85rem; color: var(--text-secondary);">Academy</span></h2>
+                </div>
+                
+                <nav class="nav-container">
+                    <ul class="nav-menu">
+                        <li class="nav-item active" id="nav-dashboard">
+                            <a href="#" onclick="switchView('dashboard')">
+                                <svg viewBox="0 0 24 24"><path d="M10 20H5a1 1 0 0 1-1-1v-6.586l7-7 7 7V19a1 1 0 0 1-1 1h-5v-6h-2v6zm-7-9.586l8-8 8 8V19a3 3 0 0 1-3 3h-4a1 1 0 0 1-1-1v-4h-2v4a1 1 0 0 1-1 1H5a3 3 0 0 1-3-3v-7.586z"/></svg>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item" id="nav-students">
+                            <a href="#" onclick="switchView('students')">
+                                <svg viewBox="0 0 24 24"><path d="M12 14v2a6 6 0 0 0-6 6H4a8 8 0 0 1 8-8zm0-1c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-2c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm6.5 3a4.5 4.5 0 0 1 4.5 4.5H22a5.5 5.5 0 0 0-5.5-5.5h-1a8.38 8.38 0 0 1 .78 2.05h.22zm-6.5 3c.76 0 1.5.11 2.22.31a8 8 0 0 1 .78-2.05 10 10 0 0 0-3-.26v2zm6.5-7.5c1.38 0 2.5 1.12 2.5 2.5s-1.12 2.5-2.5 2.5-2.5-1.12-2.5-2.5 1.12-2.5 2.5-2.5zm0 1.5c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"/></svg>
+                                Students List
+                            </a>
+                        </li>
+                        <li class="nav-item" id="nav-add-student">
+                            <a href="#" onclick="openAddStudentForm()">
+                                <svg viewBox="0 0 24 24"><path d="M19 11h-6V5a1 1 0 0 0-2 0v6H5a1 1 0 0 0 0 2h6v6a1 1 0 0 0 2 0v-6h6a1 1 0 0 0 0-2z"/></svg>
+                                Add Student
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            
+            <div class="sidebar-footer">
+                <button class="theme-toggle-btn" id="theme-toggle" onclick="toggleTheme()">
+                    <svg id="theme-icon-light" viewBox="0 0 24 24" style="display: none;"><path d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm12.02 12.02l1.415-1.414 2.12 2.121-1.414 1.414-2.121-2.121zM1 11h3v2H1v-2zm19 0h3v2h-3v-2zM4.929 20.485l-1.414-1.414 2.121-2.121 1.414 1.414-2.121 2.121zm12.02-12.02l-1.414-1.415 2.121-2.12 1.414 1.414-2.121 2.121z"/></svg>
+                    <svg id="theme-icon-dark" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.393 5.393 0 0 1-4.4 2.6 5.4 5.4 0 0 1-5.4-5.4c0-1.81 1.04-3.4 2.6-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
+                    <span id="theme-text">Dark Mode</span>
+                </button>
+                <button class="logout-btn" id="logout-btn" onclick="handleLogout()">
+                    <svg viewBox="0 0 24 24"><path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .89-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.11-.9-2-2-2z"/></svg>
+                    Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Dashboard View -->
+        <main class="main-content">
+            
+            <!-- Dashboard View -->
+            <section id="view-dashboard" class="view-section active">
+                <div class="page-header">
+                    <div>
+                        <h1>Academic Dashboard</h1>
+                        <p>Real-time analytics and statistics of student results</p>
+                    </div>
+                    <button class="btn-primary" onclick="openAddStudentForm()">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="white"><path d="M19 11h-6V5a1 1 0 0 0-2 0v6H5a1 1 0 0 0 0 2h6v6a1 1 0 0 0 2 0v-6h6a1 1 0 0 0 0-2z"/></svg>
+                        Add Student
+                    </button>
+                </div>
+
+                <!-- Metrics Grid -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div>
+                            <div class="metric-label">Total Students</div>
+                            <div class="metric-value" id="metric-total-students">0</div>
+                        </div>
+                        <div class="metric-trend up" id="trend-total-students">
+                            Registered
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div>
+                            <div class="metric-label">Class Average</div>
+                            <div class="metric-value" id="metric-class-average">0.0%</div>
+                        </div>
+                        <div class="metric-trend" id="trend-class-average">
+                            Out of 100%
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div>
+                            <div class="metric-label">Pass Rate</div>
+                            <div class="metric-value" id="metric-pass-rate">0.0%</div>
+                        </div>
+                        <div class="metric-trend up" id="trend-pass-rate">
+                            Min passing: 33%
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div>
+                            <div class="metric-label">Top Performer</div>
+                            <div class="metric-value" id="metric-top-performer" style="font-size: 1.3rem; margin-top: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">N/A</div>
+                        </div>
+                        <div class="metric-trend up" id="trend-top-score" style="color: var(--primary);">
+                            Score: -
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Subject Average Marks Comparison</h3>
+                        <div class="chart-container">
+                            <canvas id="subjectComparisonChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Top Performing Students</h3>
+                        <div class="ranking-list" id="top-students-list">
+                            <!-- Populated dynamically -->
+                            <div class="empty-state" style="padding: 2rem 0;">
+                                <p>No rankings available</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Students List View -->
+            <section id="view-students" class="view-section">
+                <div class="page-header">
+                    <div>
+                        <h1>Student Directory</h1>
+                        <p>Search, filter, and manage all student score records</p>
+                    </div>
+                    <button class="btn-primary" onclick="openAddStudentForm()">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="white"><path d="M19 11h-6V5a1 1 0 0 0-2 0v6H5a1 1 0 0 0 0 2h6v6a1 1 0 0 0 2 0v-6h6a1 1 0 0 0 0-2z"/></svg>
+                        Add Student
+                    </button>
+                </div>
+
+                <div class="directory-section">
+                    <!-- Filters and Search -->
+                    <div class="directory-controls">
+                        <div class="search-box">
+                            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                            <input type="text" class="search-input" id="search-bar" placeholder="Search by name or roll number..." oninput="filterStudents()">
+                        </div>
+                        <select class="filter-select" id="filter-result" onchange="filterStudents()">
+                            <option value="all">All Results</option>
+                            <option value="pass">Passed (>=33%)</option>
+                            <option value="fail">Failed (<33%)</option>
+                        </select>
+                        <select class="filter-select" id="filter-sort" onchange="filterStudents()">
+                            <option value="name-asc">Sort by Name (A-Z)</option>
+                            <option value="name-desc">Sort by Name (Z-A)</option>
+                            <option value="roll-asc">Sort by Roll Number (Asc)</option>
+                            <option value="score-desc">Sort by Score (Highest)</option>
+                            <option value="score-asc">Sort by Score (Lowest)</option>
+                        </select>
+                    </div>
+
+                    <!-- Students Table -->
+                    <div class="table-container">
+                        <table class="student-table" id="student-table-el">
+                            <thead>
+                                <tr>
+                                    <th>Roll No</th>
+                                    <th>Student Name</th>
+                                    <th>Subjects Passed</th>
+                                    <th>Grand Total</th>
+                                    <th>Percentage</th>
+                                    <th>Overall Result</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="student-table-body">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Add/Edit Student View -->
+            <section id="view-form" class="view-section">
+                <div class="page-header">
+                    <div>
+                        <h1 id="form-title">Add New Student</h1>
+                        <p>Fill in details and score breakdown per subject</p>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <form id="student-marks-form" onsubmit="saveStudent(event)">
+                        <input type="hidden" id="student-id">
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="student-name">Student Name *</label>
+                                <input type="text" id="student-name" class="form-control" placeholder="Enter student's full name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="student-roll">Roll Number *</label>
+                                <input type="text" id="student-roll" class="form-control" placeholder="Enter roll number" required>
+                            </div>
+                        </div>
+
+                        <!-- Subjects Marks Form Grid -->
+                        <div class="subjects-scores-container">
+                            <h3>Subject Marks Entry</h3>
+                            
+                            <!-- Header Row for Labels (Table Header style on desktop) -->
+                            <div class="subject-row-grid" style="font-weight: 600; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem; text-transform: uppercase; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                                <div>Subject</div>
+                                <div>UT 1 (Max 10)</div>
+                                <div>UT 2 (Max 10)</div>
+                                <div>Half Yearly (Max 80)</div>
+                                <div style="text-align: center;">Total (Max 100)</div>
+                            </div>
+
+                            <!-- Subject Rows (7 Subjects) -->
+                            <!-- 1. English -->
+                            <div class="subject-row-grid" data-subject="english">
+                                <div class="subject-name-lbl">English</div>
+                                <div><input type="number" min="0" max="10" step="0.5" class="form-control ut1-input" placeholder="UT1" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="10" step="0.5" class="form-control ut2-input" placeholder="UT2" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="80" step="0.5" class="form-control hy-input" placeholder="Half Yearly" oninput="calcSubjectTotal(this)"></div>
+                                <div class="subject-total-preview total-cell">0</div>
+                            </div>
+                            <!-- 2. Hindi -->
+                            <div class="subject-row-grid" data-subject="hindi">
+                                <div class="subject-name-lbl">Hindi</div>
+                                <div><input type="number" min="0" max="10" step="0.5" class="form-control ut1-input" placeholder="UT1" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="10" step="0.5" class="form-control ut2-input" placeholder="UT2" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="80" step="0.5" class="form-control hy-input" placeholder="Half Yearly" oninput="calcSubjectTotal(this)"></div>
+                                <div class="subject-total-preview total-cell">0</div>
+                            </div>
+                            <!-- 3. Mathematics -->
+                            <div class="subject-row-grid" data-subject="mathematics">
+                                <div class="subject-name-lbl">Mathematics</div>
+                                <div><input type="number" min="0" max="10" step="0.5" class="form-control ut1-input" placeholder="UT1" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="10" step="0.5" class="form-control ut2-input" placeholder="UT2" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="80" step="0.5" class="form-control hy-input" placeholder="Half Yearly" oninput="calcSubjectTotal(this)"></div>
+                                <div class="subject-total-preview total-cell">0</div>
+                            </div>
+                            <!-- 4. Science -->
+                            <div class="subject-row-grid" data-subject="science">
+                                <div class="subject-name-lbl">Science</div>
+                                <div><input type="number" min="0" max="10" step="0.5" class="form-control ut1-input" placeholder="UT1" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="10" step="0.5" class="form-control ut2-input" placeholder="UT2" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="80" step="0.5" class="form-control hy-input" placeholder="Half Yearly" oninput="calcSubjectTotal(this)"></div>
+                                <div class="subject-total-preview total-cell">0</div>
+                            </div>
+                            <!-- 5. Social Science -->
+                            <div class="subject-row-grid" data-subject="socialScience">
+                                <div class="subject-name-lbl">Social Science (SST)</div>
+                                <div><input type="number" min="0" max="10" step="0.5" class="form-control ut1-input" placeholder="UT1" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="10" step="0.5" class="form-control ut2-input" placeholder="UT2" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="80" step="0.5" class="form-control hy-input" placeholder="Half Yearly" oninput="calcSubjectTotal(this)"></div>
+                                <div class="subject-total-preview total-cell">0</div>
+                            </div>
+                            <!-- 6. Computer -->
+                            <div class="subject-row-grid" data-subject="computer">
+                                <div class="subject-name-lbl">Computer</div>
+                                <div><input type="number" min="0" max="10" step="0.5" class="form-control ut1-input" placeholder="UT1" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="10" step="0.5" class="form-control ut2-input" placeholder="UT2" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="80" step="0.5" class="form-control hy-input" placeholder="Half Yearly" oninput="calcSubjectTotal(this)"></div>
+                                <div class="subject-total-preview total-cell">0</div>
+                            </div>
+                            <!-- 7. Sanskrit -->
+                            <div class="subject-row-grid" data-subject="sanskrit">
+                                <div class="subject-name-lbl">Sanskrit</div>
+                                <div><input type="number" min="0" max="10" step="0.5" class="form-control ut1-input" placeholder="UT1" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="10" step="0.5" class="form-control ut2-input" placeholder="UT2" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="80" step="0.5" class="form-control hy-input" placeholder="Half Yearly" oninput="calcSubjectTotal(this)"></div>
+                                <div class="subject-total-preview total-cell">0</div>
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" onclick="switchView('students')">Cancel</button>
+                            <button type="submit" class="btn-primary" id="form-save-btn">Save Student</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Report Card Modal Backdrop -->
+    <div class="modal-backdrop" id="report-modal">
+        <div class="modal-wrapper">
+            <div class="modal-header">
+                <h3>Student Report Card</h3>
+                <button class="modal-close" onclick="closeReportCard()">
+                    <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- PRINT-READY REPORT CARD CONTAINER -->
+                <div class="report-card-container" id="report-card-print">
+                    
+                    <div class="report-card-header">
+                        <div class="school-logo-frame">
+                            <img src="school_logo.png" alt="Apex Logo" onerror="this.src='https://images.unsplash.com/photo-1546410531-bb4caa6b424d?auto=format&fit=crop&q=80&w=100';">
+                        </div>
+                        <div class="school-details">
+                            <h1>APEX INTERNATIONAL ACADEMY</h1>
+                            <p>Sector-12, Knowledge Park, New Delhi, India</p>
+                            <p>Affiliated to CBSE Board | School Code: 541092</p>
+                        </div>
+                        <!-- Empty symmetric space for printing balance -->
+                        <div style="width: 85px;"></div>
+                    </div>
+
+                    <div class="report-title-badge">
+                        Progress Report Card
+                    </div>
+
+                    <!-- Student Profile details -->
+                    <div class="student-info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Student Name</div>
+                            <div class="info-value" id="rc-student-name">-</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Roll Number</div>
+                            <div class="info-value" id="rc-roll-no">-</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Class & Sec</div>
+                            <div class="info-value">Class X - A</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Academic Session</div>
+                            <div class="info-value">2025 - 2026</div>
+                        </div>
+                    </div>
+
+                    <!-- Subjects Marks Table -->
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 30%;">Subject</th>
+                                <th style="width: 10%;">UT 1<br>(10)</th>
+                                <th style="width: 10%;">UT 2<br>(10)</th>
+                                <th style="width: 15%;">UT Total<br>(20)</th>
+                                <th style="width: 15%;">Half Yearly<br>(80)</th>
+                                <th style="width: 12%;">Final Score<br>(100)</th>
+                                <th style="width: 8%;">Grade</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rc-marks-table-body">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+
+                    <!-- Summary & Remarks -->
+                    <div class="report-summary-box">
+                        <div class="summary-metrics">
+                            <div class="summary-metric-row">
+                                <span>Grand Total</span>
+                                <span id="rc-grand-total">0 / 700</span>
+                            </div>
+                            <div class="summary-metric-row">
+                                <span>Overall Percentage</span>
+                                <span id="rc-percentage">0.0%</span>
+                            </div>
+                            <div class="summary-metric-row">
+                                <span>Academic Status</span>
+                                <span id="rc-status">-</span>
+                            </div>
+                            <div class="summary-metric-row">
+                                <span>Overall Grade</span>
+                                <span id="rc-grade">-</span>
+                            </div>
+                        </div>
+
+                        <div class="remarks-panel">
+                            <h4>Class Teacher's Remarks</h4>
+                            <div class="remarks-content" id="rc-remarks">
+                                "The student has demonstrated excellent capacity but should focus more on writing syntax in Sanskrit."
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CBSE Grade Reference Table -->
+                    <div class="grading-scale-ref">
+                        <span>CBSE Grading Scale:</span> A1 (91-100) | A2 (81-90) | B1 (71-80) | B2 (61-70) | C1 (51-60) | C2 (41-50) | D (33-40) | E (Essential Repeat/Fail, &lt;33)
+                    </div>
+
+                    <!-- Signatures -->
+                    <div class="signatures-box">
+                        <div class="signature-item">
+                            <div class="signature-pic" style="font-family: var(--font-hand);">Anjali Sharma</div>
+                            <div class="signature-line">Class Teacher</div>
+                        </div>
+                        <div class="signature-item">
+                            <div class="signature-pic" style="font-family: var(--font-hand); color: #b45309;">S. K. Gupta</div>
+                            <div class="signature-line">Principal</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeReportCard()">Close</button>
+                <button class="btn-primary" onclick="printReportCard()">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="white"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+                    Print Report Card
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toast-el-container"></div>
+
+    <!-- Script file -->
+    <script src="app.js"></script>
+</body>
+</html>
