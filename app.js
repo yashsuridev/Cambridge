@@ -16,51 +16,8 @@ let students = [];
 let activeView = 'dashboard';
 let subjectChart = null;
 
-// Mock Data for Initial Load
-const MOCK_STUDENTS = [
-    {
-        id: "mock-1",
-        name: "Devansh Sharma",
-        rollNo: "1001",
-        marks: {
-            english: { ut1: 8.5, ut2: 9.0, halfYearly: 74.0 },
-            hindi: { ut1: 9.0, ut2: 8.5, halfYearly: 70.0 },
-            mathematics: { ut1: 9.5, ut2: 10.0, halfYearly: 78.5 },
-            science: { ut1: 9.0, ut2: 9.5, halfYearly: 76.0 },
-            socialScience: { ut1: 8.5, ut2: 9.0, halfYearly: 72.0 },
-            computer: { ut1: 10.0, ut2: 10.0, halfYearly: 80.0 },
-            sanskrit: { ut1: 7.5, ut2: 8.0, halfYearly: 65.5 }
-        }
-    },
-    {
-        id: "mock-2",
-        name: "Priya Patel",
-        rollNo: "1002",
-        marks: {
-            english: { ut1: 7.0, ut2: 7.5, halfYearly: 62.0 },
-            hindi: { ut1: 8.0, ut2: 7.5, halfYearly: 58.0 },
-            mathematics: { ut1: 6.5, ut2: 7.0, halfYearly: 50.0 },
-            science: { ut1: 7.5, ut2: 8.0, halfYearly: 60.5 },
-            socialScience: { ut1: 8.0, ut2: 8.0, halfYearly: 64.0 },
-            computer: { ut1: 9.0, ut2: 8.5, halfYearly: 71.0 },
-            sanskrit: { ut1: 6.0, ut2: 6.5, halfYearly: 52.0 }
-        }
-    },
-    {
-        id: "mock-3",
-        name: "Aarav Singh",
-        rollNo: "1003",
-        marks: {
-            english: { ut1: 5.5, ut2: 6.0, halfYearly: 42.0 },
-            hindi: { ut1: 6.0, ut2: 5.5, halfYearly: 40.0 },
-            mathematics: { ut1: 4.0, ut2: 4.5, halfYearly: 30.0 }, // UT Total: 8.5, Final: 38.5
-            science: { ut1: 5.0, ut2: 5.0, halfYearly: 38.0 },
-            socialScience: { ut1: 5.5, ut2: 6.0, halfYearly: 44.0 },
-            computer: { ut1: 7.0, ut2: 6.5, halfYearly: 50.0 },
-            sanskrit: { ut1: 3.0, ut2: 3.5, halfYearly: 24.0 } // UT Total: 6.5, Final: 30.5 (Failed)
-        }
-    }
-];
+// No pre-loaded mock students — start with a clean slate
+const MOCK_STUDENTS = [];
 
 // ===================== AUTH LOGIC =====================
 
@@ -74,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupFormCalculationListeners();
 
     // Check if already logged in (session persists on refresh)
-    const isLoggedIn = sessionStorage.getItem('apex_logged_in') === 'true';
+    const isLoggedIn = sessionStorage.getItem('cambridge_logged_in') === 'true';
     if (isLoggedIn) {
         // Instantly hide login overlay without animation
         const overlay = document.getElementById('login-overlay');
@@ -104,7 +61,7 @@ function handleLogin(event) {
         submitBtn.classList.add('loading');
         submitBtn.textContent = 'Signing in…';
 
-        sessionStorage.setItem('apex_logged_in', 'true');
+        sessionStorage.setItem('cambridge_logged_in', 'true');
 
         setTimeout(() => {
             const overlay = document.getElementById('login-overlay');
@@ -131,7 +88,7 @@ function handleLogin(event) {
 
 // Handle Logout
 function handleLogout() {
-    sessionStorage.removeItem('apex_logged_in');
+    sessionStorage.removeItem('cambridge_logged_in');
 
     const overlay = document.getElementById('login-overlay');
     overlay.style.display = 'flex';
@@ -179,7 +136,7 @@ function togglePasswordVisibility() {
 
 // Load Theme from LocalStorage
 function loadTheme() {
-    const savedTheme = localStorage.getItem('apex_theme') || 'light';
+    const savedTheme = localStorage.getItem('cambridge_theme') || 'light';
     document.documentElement.setAttribute('data-theme', savedTheme);
     updateThemeUI(savedTheme);
 }
@@ -190,7 +147,7 @@ function toggleTheme() {
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
     
     document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('apex_theme', newTheme);
+    localStorage.setItem('cambridge_theme', newTheme);
     updateThemeUI(newTheme);
     
     // Refresh charts if we are on the dashboard
@@ -219,12 +176,17 @@ function updateThemeUI(theme) {
 
 // Load Student Data
 function loadStudents() {
-    const stored = localStorage.getItem('apex_students');
+    // Clean up any legacy 'apex_students' key from previous version
+    localStorage.removeItem('apex_students');
+    localStorage.removeItem('apex_theme');
+    localStorage.removeItem('apex_logged_in');
+
+    const stored = localStorage.getItem('cambridge_students');
     if (stored) {
         students = JSON.parse(stored);
     } else {
-        students = [...MOCK_STUDENTS];
-        localStorage.setItem('apex_students', JSON.stringify(students));
+        students = [];
+        localStorage.setItem('cambridge_students', JSON.stringify(students));
     }
 }
 
@@ -269,24 +231,46 @@ function switchView(viewId) {
 }
 
 // Math Calculations Helpers
-function getSubjectUTTotal(subjData) {
+// UT1+UT2 subtotal (max 20) and UT3+UT4 subtotal (max 20)
+function getSubjectUT12Total(subjData) {
     return Number(subjData.ut1 || 0) + Number(subjData.ut2 || 0);
 }
+function getSubjectUT34Total(subjData) {
+    return Number(subjData.ut3 || 0) + Number(subjData.ut4 || 0);
+}
+function getSubjectUTTotal(subjData) {
+    return getSubjectUT12Total(subjData) + getSubjectUT34Total(subjData);
+}
 
+// Half Yearly Total = UT1 (10) + UT2 (10) + Half Yearly Exam (80) = Max 100
+function getSubjectHalfYearlyTotal(subjData) {
+    return getSubjectUT12Total(subjData) + Number(subjData.halfYearly || 0);
+}
+
+// Annual Total = UT3 (10) + UT4 (10) + Annual Exam (80) = Max 100
+function getSubjectAnnualTotal(subjData) {
+    return getSubjectUT34Total(subjData) + Number(subjData.annual || 0);
+}
+
+// Final = Half Yearly Total (100) + Annual Total (100) = Max 200
 function getSubjectFinalMarks(subjData) {
-    return getSubjectUTTotal(subjData) + Number(subjData.halfYearly || 0);
+    return getSubjectHalfYearlyTotal(subjData) + getSubjectAnnualTotal(subjData);
 }
 
 function getSubjectGrade(score) {
-    if (score >= 91) return 'A1';
-    if (score >= 81) return 'A2';
-    if (score >= 71) return 'B1';
-    if (score >= 61) return 'B2';
-    if (score >= 51) return 'C1';
-    if (score >= 41) return 'C2';
-    if (score >= 33) return 'D';
+    const percentage = score / 2; // scaled to 100
+    if (percentage >= 91) return 'A1';
+    if (percentage >= 81) return 'A2';
+    if (percentage >= 71) return 'B1';
+    if (percentage >= 61) return 'B2';
+    if (percentage >= 51) return 'C1';
+    if (percentage >= 41) return 'C2';
+    if (percentage >= 33) return 'D';
     return 'E'; // Fail
 }
+
+// Max per subject = (UT1 + UT2 + HY) + (UT3 + UT4 + Annual) = 100 + 100 = 200
+const MAX_PER_SUBJECT = 200;
 
 function calculateStudentTotal(student) {
     let grandTotal = 0;
@@ -298,7 +282,7 @@ function calculateStudentTotal(student) {
 
 function calculateStudentPercentage(student) {
     const grandTotal = calculateStudentTotal(student);
-    return (grandTotal / (SUBJECTS.length * 100)) * 100;
+    return (grandTotal / (SUBJECTS.length * MAX_PER_SUBJECT)) * 100;
 }
 
 function getStudentOverallGrade(percentage) {
@@ -315,7 +299,7 @@ function getStudentOverallGrade(percentage) {
 function countPassedSubjects(student) {
     let passCount = 0;
     SUBJECTS.forEach(subj => {
-        if (getSubjectFinalMarks(student.marks[subj]) >= 33) {
+        if (getSubjectFinalMarks(student.marks[subj]) >= 66) {
             passCount++;
         }
     });
@@ -456,7 +440,7 @@ function renderSubjectChart() {
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            return `Average: ${context.raw} / 100`;
+                            return `Average: ${context.raw} / 200`;
                         }
                     }
                 }
@@ -464,7 +448,7 @@ function renderSubjectChart() {
             scales: {
                 y: {
                     min: 0,
-                    max: 100,
+                    max: 200,
                     ticks: {
                         color: textColor,
                         font: { family: 'Outfit', size: 12 }
@@ -557,7 +541,7 @@ function renderStudentTable(studentList) {
                 <td style="font-weight: 600;">${st.rollNo}</td>
                 <td style="font-weight: 500;">${st.name}</td>
                 <td>${passedCount} / ${SUBJECTS.length}</td>
-                <td style="font-weight: 700; color: var(--primary);">${grandTotal.toFixed(1)} <span style="font-size: 0.75rem; color: var(--text-muted);">/700</span></td>
+                <td style="font-weight: 700; color: var(--primary);">${grandTotal.toFixed(1)} <span style="font-size: 0.75rem; color: var(--text-muted);">/${SUBJECTS.length * MAX_PER_SUBJECT}</span></td>
                 <td style="font-weight: 600;">${pct.toFixed(1)}%</td>
                 <td>
                     <span class="badge ${passedOverall ? 'badge-pass' : 'badge-fail'}">
@@ -596,27 +580,32 @@ function setupFormCalculationListeners() {
             if (row) {
                 const ut1Val = row.querySelector('.ut1-input').value;
                 const ut2Val = row.querySelector('.ut2-input').value;
-                const hyVal = row.querySelector('.hy-input').value;
-                
+                const ut3Val = row.querySelector('.ut3-input').value;
+                const ut4Val = row.querySelector('.ut4-input').value;
+                const hyVal  = row.querySelector('.hy-input').value;
+                const annVal = row.querySelector('.ann-input').value;
+
                 const totalCell = row.querySelector('.total-cell');
                 if (totalCell) {
-                    if (ut1Val === "" && ut2Val === "" && hyVal === "") {
+                    if (ut1Val === '' && ut2Val === '' && ut3Val === '' && ut4Val === '' && hyVal === '' && annVal === '') {
                         totalCell.innerText = '0';
                         totalCell.style.color = 'var(--primary)';
                         totalCell.style.backgroundColor = 'var(--primary-light)';
                         return;
                     }
-                    
+
                     const ut1 = Number(ut1Val) || 0;
                     const ut2 = Number(ut2Val) || 0;
-                    const hy = Number(hyVal) || 0;
-                    
-                    const utTotal = ut1 + ut2;
-                    const final = utTotal + hy;
-                    
+                    const ut3 = Number(ut3Val) || 0;
+                    const ut4 = Number(ut4Val) || 0;
+                    const hy  = Number(hyVal)  || 0;
+                    const ann = Number(annVal)  || 0;
+
+                    const final = ut1 + ut2 + ut3 + ut4 + hy + ann;
+
                     totalCell.innerText = final.toFixed(1);
-                    // Color code dynamically based on passing mark 33
-                    if (final < 33) {
+                    // Color code dynamically based on passing mark 66 (33% of 200)
+                    if (final < 66) {
                         totalCell.style.color = 'var(--danger)';
                         totalCell.style.backgroundColor = 'var(--danger-light)';
                     } else {
@@ -646,12 +635,18 @@ function openAddStudentForm() {
     document.querySelectorAll('.subject-row-grid').forEach(row => {
         const ut1 = row.querySelector('.ut1-input');
         const ut2 = row.querySelector('.ut2-input');
-        const hy = row.querySelector('.hy-input');
+        const ut3 = row.querySelector('.ut3-input');
+        const ut4 = row.querySelector('.ut4-input');
+        const hy  = row.querySelector('.hy-input');
+        const ann = row.querySelector('.ann-input');
         const total = row.querySelector('.total-cell');
-        
+
         if (ut1) ut1.value = '';
         if (ut2) ut2.value = '';
-        if (hy) hy.value = '';
+        if (ut3) ut3.value = '';
+        if (ut4) ut4.value = '';
+        if (hy)  hy.value  = '';
+        if (ann) ann.value = '';
         if (total) {
             total.innerText = '0';
             total.style.color = 'var(--primary)';
@@ -678,22 +673,29 @@ function editStudent(id) {
         if (row) {
             const ut1Val = student.marks[subj].ut1;
             const ut2Val = student.marks[subj].ut2;
-            const hyVal = student.marks[subj].halfYearly;
-            
+            const ut3Val = student.marks[subj].ut3;
+            const ut4Val = student.marks[subj].ut4;
+            const hyVal  = student.marks[subj].halfYearly;
+            const annVal = student.marks[subj].annual;
+
             row.querySelector('.ut1-input').value = ut1Val !== null ? ut1Val : '';
             row.querySelector('.ut2-input').value = ut2Val !== null ? ut2Val : '';
-            row.querySelector('.hy-input').value = hyVal !== null ? hyVal : '';
-            
+            row.querySelector('.ut3-input').value = ut3Val !== null ? ut3Val : '';
+            row.querySelector('.ut4-input').value = ut4Val !== null ? ut4Val : '';
+            row.querySelector('.hy-input').value  = hyVal  !== null ? hyVal  : '';
+            row.querySelector('.ann-input').value = annVal !== null ? annVal : '';
+
             const totalCell = row.querySelector('.total-cell');
             if (totalCell) {
-                if (ut1Val === null && ut2Val === null && hyVal === null) {
+                const allNull = ut1Val === null && ut2Val === null && ut3Val === null && ut4Val === null && hyVal === null && annVal === null;
+                if (allNull) {
                     totalCell.innerText = '0';
                     totalCell.style.color = 'var(--primary)';
                     totalCell.style.backgroundColor = 'var(--primary-light)';
                 } else {
-                    const final = (Number(ut1Val || 0) + Number(ut2Val || 0)) + Number(hyVal || 0);
+                    const final = Number(ut1Val || 0) + Number(ut2Val || 0) + Number(ut3Val || 0) + Number(ut4Val || 0) + Number(hyVal || 0) + Number(annVal || 0);
                     totalCell.innerText = final.toFixed(1);
-                    if (final < 33) {
+                    if (final < 66) {
                         totalCell.style.color = 'var(--danger)';
                         totalCell.style.backgroundColor = 'var(--danger-light)';
                     } else {
@@ -730,26 +732,35 @@ function saveStudent(event) {
     SUBJECTS.forEach(subj => {
         const row = document.querySelector(`.subject-row-grid[data-subject="${subj}"]`);
         if (row) {
-            const ut1Val = row.querySelector('.ut1-input').value;
-            const ut2Val = row.querySelector('.ut2-input').value;
-            const halfYearlyVal = row.querySelector('.hy-input').value;
-            
-            const ut1 = ut1Val === "" ? null : Number(ut1Val);
-            const ut2 = ut2Val === "" ? null : Number(ut2Val);
-            const halfYearly = halfYearlyVal === "" ? null : Number(halfYearlyVal);
-            
-            if ((ut1 !== null && (ut1 < 0 || ut1 > 10)) || 
-                (ut2 !== null && (ut2 < 0 || ut2 > 10)) || 
-                (halfYearly !== null && (halfYearly < 0 || halfYearly > 80))) {
+            const ut1Val  = row.querySelector('.ut1-input').value;
+            const ut2Val  = row.querySelector('.ut2-input').value;
+            const ut3Val  = row.querySelector('.ut3-input').value;
+            const ut4Val  = row.querySelector('.ut4-input').value;
+            const hyVal   = row.querySelector('.hy-input').value;
+            const annVal  = row.querySelector('.ann-input').value;
+
+            const ut1       = ut1Val  === '' ? null : Number(ut1Val);
+            const ut2       = ut2Val  === '' ? null : Number(ut2Val);
+            const ut3       = ut3Val  === '' ? null : Number(ut3Val);
+            const ut4       = ut4Val  === '' ? null : Number(ut4Val);
+            const halfYearly = hyVal  === '' ? null : Number(hyVal);
+            const annual    = annVal  === '' ? null : Number(annVal);
+
+            if ((ut1 !== null && (ut1 < 0 || ut1 > 10)) ||
+                (ut2 !== null && (ut2 < 0 || ut2 > 10)) ||
+                (ut3 !== null && (ut3 < 0 || ut3 > 10)) ||
+                (ut4 !== null && (ut4 < 0 || ut4 > 10)) ||
+                (halfYearly !== null && (halfYearly < 0 || halfYearly > 80)) ||
+                (annual     !== null && (annual     < 0 || annual     > 80))) {
                 validationFailed = true;
             }
-            
-            marks[subj] = { ut1, ut2, halfYearly };
+
+            marks[subj] = { ut1, ut2, ut3, ut4, halfYearly, annual };
         }
     });
-    
+
     if (validationFailed) {
-        showToast("Validation failed. Marks out of range: UT1 (0-10), UT2 (0-10), Half Yearly (0-80).", "danger");
+        showToast('Validation failed. Marks out of range: UT1-UT4 (0-10 each), Half Yearly (0-80), Annual (0-80).', 'danger');
         return;
     }
     
@@ -773,7 +784,7 @@ function saveStudent(event) {
     }
     
     // Save to LocalStorage & Refresh
-    localStorage.setItem('apex_students', JSON.stringify(students));
+    localStorage.setItem('cambridge_students', JSON.stringify(students));
     switchView('students');
 }
 
@@ -784,7 +795,7 @@ function deleteStudent(id) {
     
     if (confirm(`Are you sure you want to delete ${student.name}'s result record?`)) {
         students = students.filter(s => s.id !== id);
-        localStorage.setItem('apex_students', JSON.stringify(students));
+        localStorage.setItem('cambridge_students', JSON.stringify(students));
         showToast("Student record deleted.", "warning");
         
         // Refresh Current View
@@ -810,35 +821,51 @@ function openReportCard(studentId) {
     // Load subjects rows
     const tbody = document.getElementById('rc-marks-table-body');
     let rowsHtml = '';
+    let halfYearlyGrand = 0;
+    let annualGrand = 0;
     let grandFinalScore = 0;
     
     SUBJECTS.forEach(subj => {
-        const sData = student.marks[subj];
-        const ut1 = sData.ut1 !== null ? sData.ut1 : '-';
-        const ut2 = sData.ut2 !== null ? sData.ut2 : '-';
-        const utTotal = (sData.ut1 !== null || sData.ut2 !== null) ? getSubjectUTTotal(sData) : '-';
-        const hy = sData.halfYearly !== null ? sData.halfYearly : '-';
-        const final = getSubjectFinalMarks(sData);
+        const sData  = student.marks[subj];
+        const ut1    = sData.ut1  !== null ? sData.ut1  : '-';
+        const ut2    = sData.ut2  !== null ? sData.ut2  : '-';
+        const ut3    = sData.ut3  !== null ? sData.ut3  : '-';
+        const ut4    = sData.ut4  !== null ? sData.ut4  : '-';
         
-        const isSubjectAllNull = sData.ut1 === null && sData.ut2 === null && sData.halfYearly === null;
+        const hy     = sData.halfYearly !== null ? sData.halfYearly : '-';
+        const ann    = sData.annual     !== null ? sData.annual     : '-';
+        
+        const hyTotal = (sData.ut1 !== null || sData.ut2 !== null || sData.halfYearly !== null) ? getSubjectHalfYearlyTotal(sData) : 0;
+        const annTotal = (sData.ut3 !== null || sData.ut4 !== null || sData.annual !== null) ? getSubjectAnnualTotal(sData) : 0;
+        const final  = getSubjectFinalMarks(sData);
+
+        const isSubjectAllNull = sData.ut1 === null && sData.ut2 === null && sData.ut3 === null && sData.ut4 === null && sData.halfYearly === null && sData.annual === null;
         const grade = isSubjectAllNull ? '-' : getSubjectGrade(final);
-        
+
+        halfYearlyGrand += hyTotal;
+        annualGrand += annTotal;
         grandFinalScore += final;
-        
-        // Highlight failed marks in print styling
-        const isSubjFailed = !isSubjectAllNull && final < 33;
+
+        // Highlight failed marks in print styling (< 66 is fail out of 200, i.e., < 33%)
+        const isSubjFailed = !isSubjectAllNull && final < 66;
         const scoreStyle = isSubjFailed ? 'color: var(--danger); font-weight: 700;' : '';
         const gradeStyle = isSubjFailed ? 'color: var(--danger); font-weight: 700;' : 'font-weight: 600; color: var(--primary);';
-        
+
         const finalScoreText = isSubjectAllNull ? '-' : final.toFixed(1);
-        
+        const hyTotalText = (sData.ut1 === null && sData.ut2 === null && sData.halfYearly === null) ? '-' : hyTotal.toFixed(1);
+        const annTotalText = (sData.ut3 === null && sData.ut4 === null && sData.annual === null) ? '-' : annTotal.toFixed(1);
+
         rowsHtml += `
             <tr>
                 <td class="subject-name">${SUBJECT_LABELS[subj]}</td>
                 <td>${ut1}</td>
                 <td>${ut2}</td>
-                <td style="font-weight: 500;">${utTotal}</td>
                 <td>${hy}</td>
+                <td style="font-weight:500">${hyTotalText}</td>
+                <td>${ut3}</td>
+                <td>${ut4}</td>
+                <td>${ann}</td>
+                <td style="font-weight:500">${annTotalText}</td>
                 <td style="${scoreStyle}">${finalScoreText}</td>
                 <td style="${gradeStyle}">${grade}</td>
             </tr>
@@ -846,26 +873,41 @@ function openReportCard(studentId) {
     });
     
     // Total Row
-    const grandPercentage = (grandFinalScore / 700) * 100;
+    const maxTotal = SUBJECTS.length * MAX_PER_SUBJECT;
+    const maxHalfYearly = SUBJECTS.length * 100;
+    const maxAnnual = SUBJECTS.length * 100;
+    
+    const grandPercentage = (grandFinalScore / maxTotal) * 100;
+    const halfYearlyPercentage = (halfYearlyGrand / maxHalfYearly) * 100;
+    const annualPercentage = (annualGrand / maxAnnual) * 100;
+    
     const passedAll = grandPercentage >= 33;
     const overallGrade = getStudentOverallGrade(grandPercentage);
-    
+
     rowsHtml += `
         <tr class="total-row">
             <td class="subject-name">GRAND TOTAL</td>
             <td>-</td>
             <td>-</td>
             <td>-</td>
+            <td>${halfYearlyGrand.toFixed(1)}</td>
             <td>-</td>
-            <td>${grandFinalScore.toFixed(1)} / 700</td>
+            <td>-</td>
+            <td>-</td>
+            <td>${annualGrand.toFixed(1)}</td>
+            <td>${grandFinalScore.toFixed(1)} / ${maxTotal}</td>
             <td>${overallGrade}</td>
         </tr>
     `;
-    
+
     tbody.innerHTML = rowsHtml;
-    
+
     // Summary values
-    document.getElementById('rc-grand-total').innerText = `${grandFinalScore.toFixed(1)} / 700`;
+    document.getElementById('rc-hy-total').innerText = `${halfYearlyGrand.toFixed(1)} / ${maxHalfYearly}`;
+    document.getElementById('rc-hy-percentage').innerText = `${halfYearlyPercentage.toFixed(1)}%`;
+    document.getElementById('rc-ann-total').innerText = `${annualGrand.toFixed(1)} / ${maxAnnual}`;
+    document.getElementById('rc-ann-percentage').innerText = `${annualPercentage.toFixed(1)}%`;
+    document.getElementById('rc-grand-total').innerText = `${grandFinalScore.toFixed(1)} / ${maxTotal}`;
     document.getElementById('rc-percentage').innerText = `${grandPercentage.toFixed(1)}%`;
     
     const statusEl = document.getElementById('rc-status');
@@ -881,7 +923,7 @@ function openReportCard(studentId) {
     let highestSubj = '';
     let highestScore = -1;
     let lowestSubj = '';
-    let lowestScore = 101;
+    let lowestScore = 201; // out of 200
     
     SUBJECTS.forEach(subj => {
         const final = getSubjectFinalMarks(student.marks[subj]);

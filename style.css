@@ -584,7 +584,7 @@ body {
     border-radius: var(--border-radius);
     padding: 2rem;
     box-shadow: var(--card-shadow);
-    max-width: 900px;
+    max-width: 1150px;
     margin: 0 auto;
 }
 
@@ -643,8 +643,8 @@ body {
 
 .subject-row-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
-    gap: 1rem;
+    grid-template-columns: 2.2fr 1fr 1fr 1fr 1fr 1.2fr 1.2fr 1fr;
+    gap: 0.75rem;
     align-items: center;
     margin-bottom: 1rem;
 }
@@ -664,13 +664,23 @@ body {
     color: var(--text-primary);
 }
 
+.subject-row-grid .form-control {
+    padding: 0.5rem 0.25rem;
+    text-align: center;
+    min-width: 0;
+    width: 100%;
+    font-size: 0.9rem;
+}
+
 .subject-total-preview {
     font-weight: 700;
     color: var(--primary);
     background-color: var(--primary-light);
-    padding: 0.75rem;
+    padding: 0.5rem 0.25rem;
     border-radius: 10px;
     text-align: center;
+    min-width: 0;
+    width: 100%;
 }
 
 .form-actions {
@@ -740,7 +750,7 @@ body {
 .modal-wrapper {
     background-color: var(--bg-secondary);
     border-radius: 20px;
-    max-width: 900px;
+    max-width: 1050px;
     width: 100%;
     box-shadow: var(--modal-shadow);
     border: 1px solid var(--border-color);

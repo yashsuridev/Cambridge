@@ -260,12 +260,15 @@
                             <h3>Subject Marks Entry</h3>
                             
                             <!-- Header Row for Labels (Table Header style on desktop) -->
-                            <div class="subject-row-grid" style="font-weight: 600; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem; text-transform: uppercase; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-                                <div>Subject</div>
-                                <div>UT 1 (Max 10)</div>
-                                <div>UT 2 (Max 10)</div>
-                                <div>Half Yearly (Max 80)</div>
-                                <div style="text-align: center;">Total (Max 100)</div>
+                            <div class="subject-row-grid" style="font-weight: 600; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.5rem; text-transform: uppercase; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; text-align: center;">
+                                <div style="text-align: left;">Subject</div>
+                                <div>UT 1<br>(10)</div>
+                                <div>UT 2<br>(10)</div>
+                                <div>UT 3<br>(10)</div>
+                                <div>UT 4<br>(10)</div>
+                                <div>Half Yearly<br>(80)</div>
+                                <div>Annual<br>(80)</div>
+                                <div>Total<br>(200)</div>
                             </div>
 
                             <!-- Subject Rows (7 Subjects) -->
@@ -274,7 +277,10 @@
                                 <div class="subject-name-lbl">English</div>
                                 <div><input type="number" min="0" max="10" step="0.5" class="form-control ut1-input" placeholder="UT1" oninput="calcSubjectTotal(this)"></div>
                                 <div><input type="number" min="0" max="10" step="0.5" class="form-control ut2-input" placeholder="UT2" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="10" step="0.5" class="form-control ut3-input" placeholder="UT3" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="10" step="0.5" class="form-control ut4-input" placeholder="UT4" oninput="calcSubjectTotal(this)"></div>
                                 <div><input type="number" min="0" max="80" step="0.5" class="form-control hy-input" placeholder="Half Yearly" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="80" step="0.5" class="form-control ann-input" placeholder="Annual" oninput="calcSubjectTotal(this)"></div>
                                 <div class="subject-total-preview total-cell">0</div>
                             </div>
                             <!-- 2. Hindi -->
@@ -282,7 +288,10 @@
                                 <div class="subject-name-lbl">Hindi</div>
                                 <div><input type="number" min="0" max="10" step="0.5" class="form-control ut1-input" placeholder="UT1" oninput="calcSubjectTotal(this)"></div>
                                 <div><input type="number" min="0" max="10" step="0.5" class="form-control ut2-input" placeholder="UT2" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="10" step="0.5" class="form-control ut3-input" placeholder="UT3" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="10" step="0.5" class="form-control ut4-input" placeholder="UT4" oninput="calcSubjectTotal(this)"></div>
                                 <div><input type="number" min="0" max="80" step="0.5" class="form-control hy-input" placeholder="Half Yearly" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="80" step="0.5" class="form-control ann-input" placeholder="Annual" oninput="calcSubjectTotal(this)"></div>
                                 <div class="subject-total-preview total-cell">0</div>
                             </div>
                             <!-- 3. Mathematics -->
@@ -290,7 +299,10 @@
                                 <div class="subject-name-lbl">Mathematics</div>
                                 <div><input type="number" min="0" max="10" step="0.5" class="form-control ut1-input" placeholder="UT1" oninput="calcSubjectTotal(this)"></div>
                                 <div><input type="number" min="0" max="10" step="0.5" class="form-control ut2-input" placeholder="UT2" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="10" step="0.5" class="form-control ut3-input" placeholder="UT3" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="10" step="0.5" class="form-control ut4-input" placeholder="UT4" oninput="calcSubjectTotal(this)"></div>
                                 <div><input type="number" min="0" max="80" step="0.5" class="form-control hy-input" placeholder="Half Yearly" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="80" step="0.5" class="form-control ann-input" placeholder="Annual" oninput="calcSubjectTotal(this)"></div>
                                 <div class="subject-total-preview total-cell">0</div>
                             </div>
                             <!-- 4. Science -->
@@ -298,7 +310,10 @@
                                 <div class="subject-name-lbl">Science</div>
                                 <div><input type="number" min="0" max="10" step="0.5" class="form-control ut1-input" placeholder="UT1" oninput="calcSubjectTotal(this)"></div>
                                 <div><input type="number" min="0" max="10" step="0.5" class="form-control ut2-input" placeholder="UT2" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="10" step="0.5" class="form-control ut3-input" placeholder="UT3" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="10" step="0.5" class="form-control ut4-input" placeholder="UT4" oninput="calcSubjectTotal(this)"></div>
                                 <div><input type="number" min="0" max="80" step="0.5" class="form-control hy-input" placeholder="Half Yearly" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="80" step="0.5" class="form-control ann-input" placeholder="Annual" oninput="calcSubjectTotal(this)"></div>
                                 <div class="subject-total-preview total-cell">0</div>
                             </div>
                             <!-- 5. Social Science -->
@@ -306,7 +321,10 @@
                                 <div class="subject-name-lbl">Social Science (SST)</div>
                                 <div><input type="number" min="0" max="10" step="0.5" class="form-control ut1-input" placeholder="UT1" oninput="calcSubjectTotal(this)"></div>
                                 <div><input type="number" min="0" max="10" step="0.5" class="form-control ut2-input" placeholder="UT2" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="10" step="0.5" class="form-control ut3-input" placeholder="UT3" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="10" step="0.5" class="form-control ut4-input" placeholder="UT4" oninput="calcSubjectTotal(this)"></div>
                                 <div><input type="number" min="0" max="80" step="0.5" class="form-control hy-input" placeholder="Half Yearly" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="80" step="0.5" class="form-control ann-input" placeholder="Annual" oninput="calcSubjectTotal(this)"></div>
                                 <div class="subject-total-preview total-cell">0</div>
                             </div>
                             <!-- 6. Computer -->
@@ -314,7 +332,10 @@
                                 <div class="subject-name-lbl">Computer</div>
                                 <div><input type="number" min="0" max="10" step="0.5" class="form-control ut1-input" placeholder="UT1" oninput="calcSubjectTotal(this)"></div>
                                 <div><input type="number" min="0" max="10" step="0.5" class="form-control ut2-input" placeholder="UT2" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="10" step="0.5" class="form-control ut3-input" placeholder="UT3" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="10" step="0.5" class="form-control ut4-input" placeholder="UT4" oninput="calcSubjectTotal(this)"></div>
                                 <div><input type="number" min="0" max="80" step="0.5" class="form-control hy-input" placeholder="Half Yearly" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="80" step="0.5" class="form-control ann-input" placeholder="Annual" oninput="calcSubjectTotal(this)"></div>
                                 <div class="subject-total-preview total-cell">0</div>
                             </div>
                             <!-- 7. Sanskrit -->
@@ -322,7 +343,10 @@
                                 <div class="subject-name-lbl">Sanskrit</div>
                                 <div><input type="number" min="0" max="10" step="0.5" class="form-control ut1-input" placeholder="UT1" oninput="calcSubjectTotal(this)"></div>
                                 <div><input type="number" min="0" max="10" step="0.5" class="form-control ut2-input" placeholder="UT2" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="10" step="0.5" class="form-control ut3-input" placeholder="UT3" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="10" step="0.5" class="form-control ut4-input" placeholder="UT4" oninput="calcSubjectTotal(this)"></div>
                                 <div><input type="number" min="0" max="80" step="0.5" class="form-control hy-input" placeholder="Half Yearly" oninput="calcSubjectTotal(this)"></div>
+                                <div><input type="number" min="0" max="80" step="0.5" class="form-control ann-input" placeholder="Annual" oninput="calcSubjectTotal(this)"></div>
                                 <div class="subject-total-preview total-cell">0</div>
                             </div>
                         </div>
@@ -357,7 +381,7 @@
                             <img src="school_logo.png" alt="Apex Logo" onerror="this.src='https://images.unsplash.com/photo-1546410531-bb4caa6b424d?auto=format&fit=crop&q=80&w=100';">
                         </div>
                         <div class="school-details">
-                            <h1>APEX INTERNATIONAL ACADEMY</h1>
+                            <h1>CAMBRIDGE SCHOOL</h1>
                             <p>Sector-12, Knowledge Park, New Delhi, India</p>
                             <p>Affiliated to CBSE Board | School Code: 541092</p>
                         </div>
@@ -393,12 +417,16 @@
                     <table class="report-table">
                         <thead>
                             <tr>
-                                <th style="width: 30%;">Subject</th>
-                                <th style="width: 10%;">UT 1<br>(10)</th>
-                                <th style="width: 10%;">UT 2<br>(10)</th>
-                                <th style="width: 15%;">UT Total<br>(20)</th>
-                                <th style="width: 15%;">Half Yearly<br>(80)</th>
-                                <th style="width: 12%;">Final Score<br>(100)</th>
+                                <th style="width: 18%;">Subject</th>
+                                <th style="width: 6%;">UT 1<br>(10)</th>
+                                <th style="width: 6%;">UT 2<br>(10)</th>
+                                <th style="width: 9%;">Half Yearly<br>(80)</th>
+                                <th style="width: 10%;">HY Total<br>(100)</th>
+                                <th style="width: 6%;">UT 3<br>(10)</th>
+                                <th style="width: 6%;">UT 4<br>(10)</th>
+                                <th style="width: 9%;">Annual<br>(80)</th>
+                                <th style="width: 10%;">Annual Total<br>(100)</th>
+                                <th style="width: 12%;">Final Score<br>(200)</th>
                                 <th style="width: 8%;">Grade</th>
                             </tr>
                         </thead>
@@ -411,11 +439,27 @@
                     <div class="report-summary-box">
                         <div class="summary-metrics">
                             <div class="summary-metric-row">
-                                <span>Grand Total</span>
-                                <span id="rc-grand-total">0 / 700</span>
+                                <span>Half Yearly Total</span>
+                                <span id="rc-hy-total">0 / 700</span>
                             </div>
                             <div class="summary-metric-row">
-                                <span>Overall Percentage</span>
+                                <span>Half Yearly %</span>
+                                <span id="rc-hy-percentage">0.0%</span>
+                            </div>
+                            <div class="summary-metric-row">
+                                <span>Annual Total</span>
+                                <span id="rc-ann-total">0 / 700</span>
+                            </div>
+                            <div class="summary-metric-row">
+                                <span>Annual %</span>
+                                <span id="rc-ann-percentage">0.0%</span>
+                            </div>
+                            <div class="summary-metric-row" style="border-top: 1px dashed var(--border-color); padding-top: 0.5rem; margin-top: 0.5rem; font-weight: 700; color: var(--primary);">
+                                <span>Grand Final Total</span>
+                                <span id="rc-grand-total">0 / 1400</span>
+                            </div>
+                            <div class="summary-metric-row" style="font-weight: 700; color: var(--primary);">
+                                <span>Final Percentage</span>
                                 <span id="rc-percentage">0.0%</span>
                             </div>
                             <div class="summary-metric-row">
