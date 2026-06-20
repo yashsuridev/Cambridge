@@ -852,8 +852,8 @@ function openReportCard(studentId) {
         const gradeStyle = isSubjFailed ? 'color: var(--danger); font-weight: 700;' : 'font-weight: 600; color: var(--primary);';
 
         const finalScoreText = isSubjectAllNull ? '-' : final.toFixed(1);
-        const hyTotalText = (sData.ut1 === null && sData.ut2 === null && sData.halfYearly === null) ? '-' : hyTotal.toFixed(1);
-        const annTotalText = (sData.ut3 === null && sData.ut4 === null && sData.annual === null) ? '-' : annTotal.toFixed(1);
+        const hyTotalText = (sData.ut1 === null && sData.ut2 === null && sData.halfYearly === null) ? '-' : hyTotal.toFixed(1) + '%';
+        const annTotalText = (sData.ut3 === null && sData.ut4 === null && sData.annual === null) ? '-' : annTotal.toFixed(1) + '%';
 
         rowsHtml += `
             <tr>
@@ -890,11 +890,11 @@ function openReportCard(studentId) {
             <td>-</td>
             <td>-</td>
             <td>-</td>
-            <td>${halfYearlyGrand.toFixed(1)}</td>
+            <td>${halfYearlyPercentage.toFixed(1)}%</td>
             <td>-</td>
             <td>-</td>
             <td>-</td>
-            <td>${annualGrand.toFixed(1)}</td>
+            <td>${annualPercentage.toFixed(1)}%</td>
             <td>${grandFinalScore.toFixed(1)} / ${maxTotal}</td>
             <td>${overallGrade}</td>
         </tr>
